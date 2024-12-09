@@ -70,6 +70,8 @@ class HomeController extends GetxController {
     isEncryptData.value = false;
     isHeader.value = false;
     box.write("isAddContent", isAddContent.value);
+    box.write("showEncryptData", isEncryptData.value);
+    box.write("showHeaderData", isHeader.value);
     update();
   }
 
@@ -83,7 +85,10 @@ class HomeController extends GetxController {
     isEncryptData.value = value;
     isAddContent.value = false;
     isHeader.value = false;
+    box.write("isAddContent", isAddContent.value);
     box.write("showEncryptData", isEncryptData.value);
+    box.write("showHeaderData", isHeader.value);
+
     update();
   }
 
@@ -91,6 +96,8 @@ class HomeController extends GetxController {
     isHeader.value = value;
     isAddContent.value = false;
     isEncryptData.value = false;
+    box.write("isAddContent", isAddContent.value);
+    box.write("showEncryptData", isEncryptData.value);
     box.write("showHeaderData", isHeader.value);
     update();
   }
@@ -99,7 +106,7 @@ class HomeController extends GetxController {
     try {
       if (urlController.text.trim().isNotEmpty) {
         isLoading.value = true;
-        responseData = "";
+        responseData = null;
 
         headerData.value = {};
         for (int i = 0; i < headerKeyData.length; i++) {
@@ -140,13 +147,14 @@ class HomeController extends GetxController {
             if (dataController.text.trim().isNotEmpty) {
               box.write("content", dataController.text.trim());
             }
-            print("jskjkjkjs:${dataController.text.trim()}");
+            print("jd:${headerData}");
+
             final response = await dio.post(urlController.text.trim(),
                 data: dataController.text.trim().isNotEmpty
                     ? json.decode(dataController.text.trim())
                     : null,
                 options: Options(headers: headerData));
-            print(response.statusCode.toString());
+            print("rd:${response.headers}");
             statusCode.value = response.statusCode.toString();
 
             box.write("statusCode", statusCode.value);
@@ -158,21 +166,27 @@ class HomeController extends GetxController {
               box.write("responseData", responseData);
               update();
             } else {
-              print("sjkjskjs");
               responseData = response.data;
 
               box.write("responseData", responseData);
               update();
             }
           } on DioException catch (e) {
+            print(e.requestOptions.headers.toString());
             if (e.response != null) {
               debugPrint("Post Error: ${e.response?.data ?? e.message}");
-              statusCode.value = e.response!.statusCode.toString();
+
               responseData = "${e.response?.data ?? e.message}";
+            } else {
+              responseData = "${e.message}";
+            }
+
+            if (e.response != null) {
+              statusCode.value = e.response!.statusCode.toString();
               box.write("statusCode", e.response!.statusCode.toString());
               box.write("responseData", "${e.response?.data ?? e.message}");
-              update();
             }
+            update();
           }
         }
       }

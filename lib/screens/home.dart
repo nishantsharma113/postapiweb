@@ -383,7 +383,7 @@ class Home extends GetView<HomeController> {
                         ).p8(),
                       )
                     : controller.isLoading.value == true &&
-                            controller.responseData.isNotEmpty
+                            controller.responseData == null
                         ? const Text("Loading ....")
                         : const SizedBox(),
               ],
