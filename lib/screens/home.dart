@@ -184,7 +184,9 @@ class Home extends GetView<HomeController> {
                                         flex: 1,
                                         child: Container(
                                                 width: context.screenWidth,
-                                                height: 145,
+                                                constraints: BoxConstraints(
+                                                    maxHeight: 400,
+                                                    minHeight: 145),
                                                 decoration: BoxDecoration(
                                                     border: Border.all(
                                                         width: 0.5,
